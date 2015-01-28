@@ -1,0 +1,46 @@
+// Locks layers that were previously locked (command control l)
+
+#import 'sandbox.js'
+
+// Get all pages in the document
+var currentPage = doc.currentPage()
+var currentArtboard = currentPage.currentArtboard()
+var lockedKey = ':locked'
+toggleLockAllLayers( currentArtboard.layers() )
+
+
+// Recursively traverses and unlocks a tree of layers, since layers can be nested
+// in groups
+function toggleLockAllLayers(layers) {
+    processAllLayers(layers, function(layer) {
+        if ( layer.isLocked() ) {
+            layer.setName( layer.name() + lockedKey )
+            toggleLock( layer )
+        } else {
+            if ( layer.name().match( lockedKey ) ) {
+                layer.setName( layer.name().replace( lockedKey, '' ) )
+                toggleLock( layer )
+            }
+        }
+    } )
+}
+
+function toggleLock( layer ) {
+    layer.setIsLocked( !layer.isLocked() )
+}
+
+// Thanks to https://github.com/alssndro/sandros-sketch-plugins/blob/master/alessndro_library.js
+function processAllLayers(layers, callback) {
+    for (var i = 0; i < [layers count]; i++) {
+      var layer = [layers objectAtIndex:i];
+      log(layer)
+      if ([layer isMemberOfClass:[MSLayerGroup class]]) {
+        callback(layer);
+        // Also process child layers/groups
+        processAllLayers([layer layers], callback);
+      }
+      else {
+        callback(layer);
+      }
+    }
+}
