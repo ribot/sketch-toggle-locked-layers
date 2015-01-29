@@ -5,7 +5,7 @@
 // Get all pages in the document
 var currentPage = doc.currentPage()
 var currentArtboard = currentPage.currentArtboard()
-var lockedKey = ':locked'
+var lockedKey = ' 🔓'
 toggleLockAllLayers( currentArtboard.layers() )
 
 
